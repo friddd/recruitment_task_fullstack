@@ -13,7 +13,7 @@ class ExchangeRatesTest extends WebTestCase
         $this->httpClient = static::createClient();
     }
 
-    public function testExchangeRatesSuccess()
+    public function testExchangeRatesSuccess(): void
     {
         $this->httpClient->request('GET', '/api/exchange-rates');
         $response = $this->httpClient->getResponse();
@@ -22,7 +22,7 @@ class ExchangeRatesTest extends WebTestCase
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
     }
 
-    public function testExchangeRatesIncorrectFormat()
+    public function testExchangeRatesIncorrectFormat(): void
     {
         $this->httpClient->request('GET', '/api/exchange-rates/20iA-01-01');
         $response = $this->httpClient->getResponse();
@@ -33,7 +33,7 @@ class ExchangeRatesTest extends WebTestCase
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 
-    public function testExchangeRatesFutureDate()
+    public function testExchangeRatesFutureDate(): void
     {
         $this->httpClient->request('GET', '/api/exchange-rates/2010-01-01');
         $response = $this->httpClient->getResponse();

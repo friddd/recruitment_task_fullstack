@@ -18,7 +18,7 @@ class CurrencyExchangeTest extends TestCase
         $this->currencyExchange = new CurrencyExchange($this->nbpApiMock, $currencyCodes);
     }
 
-    public function testCurrentRateDateIsToday()
+    public function testCurrentRateDateIsToday(): void
     {
         $expectedDate = (new \DateTime())->format('Y-m-d');
         $this->nbpApiMock
@@ -28,7 +28,7 @@ class CurrencyExchangeTest extends TestCase
         $this->assertEquals($expectedDate, $actualRates[0]->getCurrentRate()->getDate());
     }
 
-    public function testCurrencyRateWithEmptyCurrencyNameAndRates()
+    public function testCurrencyRateWithEmptyCurrencyNameAndRates(): void
     {
         $this->nbpApiMock
             ->method('getExchangeRate')
