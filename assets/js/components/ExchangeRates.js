@@ -12,7 +12,7 @@ class ExchangeRates extends Component {
             loading: true,
             exchangeRates: [],
             date: selectedDate || new Date().toISOString().slice(0, 10),
-            errorMessage: ''
+            errorMessage: null
         };
     }
 

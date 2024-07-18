@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Card = ({ selectedRate, currentRate }) => {
+const CurrencyCard = ({ selectedRate, currentRate }) => {
 
     const currencyCode = selectedRate.currency.code || currentRate.currency.code || '-';
     const currencyName = selectedRate.currency.name || currentRate.currency.name || '-';
@@ -31,7 +31,7 @@ const Card = ({ selectedRate, currentRate }) => {
                                 <span className="badge badge-secondary ml-3 mr-3">{selectedRate.date}</span>
                             </td>
                             <td>
-                                <span className="badge badge-secondary ml-3 mr-3">Today</span>
+                                <span className="badge badge-secondary ml-3 mr-3">Last ({currentRate.date})</span>
                             </td>
                         </tr>
                         <tr>
@@ -74,4 +74,4 @@ const Card = ({ selectedRate, currentRate }) => {
     );
 };
 
-export default Card;
+export default CurrencyCard;

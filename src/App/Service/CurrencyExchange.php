@@ -39,9 +39,14 @@ class CurrencyExchange
     {
         $rates = [];
 
+        try {
+            $currentDate = $this->nbpApi->getLastTableDate();
+        } catch (\Throwable $tex) {
+            $currentDate = (new \DateTime())->format('Y-m-d');
+        }
+
         foreach ($this->getSupportedCurrencyCodes() as $currencyCode) {
-            $today = new \DateTime();
-            $currentRate = $this->getCurrencyRate($currencyCode, $today->format('Y-m-d'));
+            $currentRate = $this->getCurrencyRate($currencyCode, $currentDate);
             $selectedRate = $this->getCurrencyRate($currencyCode, $date);
             $rates[] = new ExchangeRateDTO($currentRate, $selectedRate);
         }

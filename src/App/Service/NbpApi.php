@@ -23,7 +23,7 @@ class NbpApi
 
     public function __construct()
     {
-        $this->apiUrl = 'https://api.nbp.pl/api/';
+        $this->apiUrl = 'https://api.nbp.pl/api';
         $this->httpClient = HttpClient::create();
     }
 
@@ -40,7 +40,7 @@ class NbpApi
      */
     public function getExchangeRate(string $code, string $date): array
     {
-        $endpoint = sprintf("exchangerates/rates/a/%s/%s?format=json", $code, $date);
+        $endpoint = sprintf("/exchangerates/rates/a/%s/%s?format=json", $code, $date);
         $response = $this->httpClient->request(Request::METHOD_GET, $this->apiUrl . $endpoint);
         $status = $response->getStatusCode();
 
@@ -53,6 +53,28 @@ class NbpApi
         }
         if ($status == 404) {
             throw new NotFoundException(sprintf("%s exchange rate on %s not found.", $code, $date));
+        }
+
+        throw new Exception("Unexpected error.");
+    }
+
+    /**
+     * @return string
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function getLastTableDate(): string
+    {
+        $endpoint = "/exchangerates/tables/A/last/1?format=json";
+        $response = $this->httpClient->request(Request::METHOD_GET, $this->apiUrl . $endpoint);
+        $status = $response->getStatusCode();
+
+        if ($status == 200) {
+            $responseData = $response->toArray();
+            return $responseData[0]['effectiveDate'];
         }
 
         throw new Exception("Unexpected error.");

@@ -1,6 +1,7 @@
 <?php
 
 namespace Unit\Service;
+use App\Exception\NotFoundException;
 use PHPUnit\Framework\TestCase;
 use App\Service\CurrencyExchange;
 use App\Service\NbpApi;
@@ -17,10 +18,32 @@ class CurrencyExchangeTest extends TestCase
         $this->currencyExchange = new CurrencyExchange($this->nbpApiMock, $currencyCodes);
     }
 
+    public function testCurrentRateDateIsToday()
+    {
+        $expectedDate = (new \DateTime())->format('Y-m-d');
+        $this->nbpApiMock
+            ->method('getLastTableDate')
+            ->willThrowException(new \Exception);
+        $actualRates = $this->currencyExchange->getRatesByDate('2024-01-01');
+        $this->assertEquals($expectedDate, $actualRates[0]->getCurrentRate()->getDate());
+    }
+
+    public function testCurrencyRateWithEmptyCurrencyNameAndRates()
+    {
+        $this->nbpApiMock
+            ->method('getExchangeRate')
+            ->willThrowException(new NotFoundException);
+        $actualCurrencyRate = $this->currencyExchange->getCurrencyRate('USD','2024-01-01');
+        $this->assertNull($actualCurrencyRate->getCurrency()->getName());
+        $this->assertNull($actualCurrencyRate->getNbpRate());
+        $this->assertNull($actualCurrencyRate->getBuyRate());
+        $this->assertNull($actualCurrencyRate->getSellRate());
+    }
+
     /**
      * @dataProvider sellRateProvider
      */
-    public function testSellRateCalculate(string $currencyCode, string $currencyName, float $nbpRate, float $expectedRate)
+    public function testSellRateCalculate(string $currencyCode, string $currencyName, float $nbpRate, float $expectedRate): void
     {
         $this->nbpApiMock
             ->method('getExchangeRate')
@@ -29,11 +52,10 @@ class CurrencyExchangeTest extends TestCase
                 'rate' => $nbpRate
             ]);
         $actualCurrencyRate = $this->currencyExchange->getCurrencyRate($currencyCode, '2024-01-01');
-
         $this->assertEquals($expectedRate, $actualCurrencyRate->getSellRate());
     }
 
-    public function sellRateProvider()
+    public function sellRateProvider(): array
     {
         return [
             ['EUR', 'euro', 4.2904, 4.3604],
@@ -46,7 +68,7 @@ class CurrencyExchangeTest extends TestCase
     /**
      * @dataProvider buyRateProvider
      */
-    public function testBuyRateCalculate(string $currencyCode, string $currencyName, float $nbpRate, ?float $expectedRate)
+    public function testBuyRateCalculate(string $currencyCode, string $currencyName, float $nbpRate, ?float $expectedRate): void
     {
         $this->nbpApiMock
             ->method('getExchangeRate')
@@ -55,11 +77,10 @@ class CurrencyExchangeTest extends TestCase
                 'rate' => $nbpRate
             ]);
         $actualCurrencyRate = $this->currencyExchange->getCurrencyRate($currencyCode, '2024-01-01');
-
         $this->assertEquals($expectedRate, $actualCurrencyRate->getBuyRate());
     }
 
-    public function buyRateProvider()
+    public function buyRateProvider(): array
     {
         return [
             ['EUR', 'euro', 4.2904, 4.2404],
