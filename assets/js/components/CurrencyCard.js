@@ -13,6 +13,8 @@ const CurrencyCard = ({ selectedRate, currentRate }) => {
         }
     };
 
+    const isSelectedSameAsCurrent = selectedRate.date === currentRate.date;
+
     return (
         <div className="card col-xs-3 m-2">
             <div className="card-body p-1 pb-3">
@@ -22,16 +24,18 @@ const CurrencyCard = ({ selectedRate, currentRate }) => {
                             <td rowSpan={2} className="pl-3">
                                 <h2><span className="badge badge-info">{currencyCode}</span></h2>
                             </td>
-                            <td colSpan={2} className="text-center">
+                            <td colSpan={2} className="text-center pl-2 pr-2">
                                 {currencyName}
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td className="text-center">
                                 <span className="badge badge-secondary ml-3 mr-3">{selectedRate.date}</span>
                             </td>
                             <td>
-                                <span className="badge badge-secondary ml-3 mr-3">Last ({currentRate.date})</span>
+                                {!isSelectedSameAsCurrent && (
+                                    <span className="badge badge-secondary ml-3 mr-3">Last [{currentRate.date}]</span>
+                                )}
                             </td>
                         </tr>
                         <tr>
@@ -42,7 +46,7 @@ const CurrencyCard = ({ selectedRate, currentRate }) => {
                                 {renderRate(selectedRate.buyRate)}
                             </td>
                             <td className="text-center">
-                                {renderRate(currentRate.buyRate)}
+                                {!isSelectedSameAsCurrent && renderRate(currentRate.buyRate)}
                             </td>
                         </tr>
                         <tr>
@@ -53,7 +57,7 @@ const CurrencyCard = ({ selectedRate, currentRate }) => {
                                 {renderRate(selectedRate.sellRate)}
                             </td>
                             <td className="text-center">
-                                {renderRate(currentRate.sellRate)}
+                                {!isSelectedSameAsCurrent && renderRate(currentRate.sellRate)}
                             </td>
                         </tr>
                         <tr>
@@ -64,7 +68,7 @@ const CurrencyCard = ({ selectedRate, currentRate }) => {
                                 {renderRate(selectedRate.nbpRate)}
                             </td>
                             <td className="text-center">
-                                {renderRate(currentRate.nbpRate)}
+                                {!isSelectedSameAsCurrent && renderRate(currentRate.nbpRate)}
                             </td>
                         </tr>
                     </tbody>
